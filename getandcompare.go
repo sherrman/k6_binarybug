@@ -34,7 +34,10 @@ func compareBinary(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(500)
 	}
 
+	fmt.Printf("%v: %d\n", filename, len(body))
+
 	if !bytes.Equal(data, body) {
+		ioutil.WriteFile(fmt.Sprintf("%v_compare", filename), body, 0644)
 		w.WriteHeader(400)
 		w.Write([]byte("Uploaded data doesn't match"))
 		return
@@ -45,5 +48,6 @@ func compareBinary(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/binary", getBinary)
 	http.HandleFunc("/compare", compareBinary)
+	fmt.Println("Listening on *:9999")
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }
